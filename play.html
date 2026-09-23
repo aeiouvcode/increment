@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#ece7dd">
+<title>Increment</title>
+<style>
+html,body{margin:0;height:100%;background:#ece7dd;overflow:hidden;touch-action:none}
+#canvas{display:block;width:100%;height:100%}
+#boot{pointer-events:none;position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 32px;font:15px/1.45 -apple-system,system-ui,sans-serif;color:#22262a;background:#ece7dd;transition:opacity .4s}
+#boot h1{font-weight:600;font-size:22px;margin:0 0 4px}
+#boot p{margin:0 0 22px;color:#6f7376}
+#bar{height:3px;background:#dcd5c8;border-radius:2px;overflow:hidden;max-width:320px}
+#fill{height:100%;width:0;background:#2c6a64;transition:width .2s}
+#msg{margin-top:14px;font-size:13px;color:#6f7376}
+</style>
+<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
+<link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
+
+</head>
+<body>
+<canvas id="canvas">Your browser can't show this game.</canvas>
+<div id="boot"><h1>Increment</h1><p>Five days aboard a space station.</p><div id="bar"><div id="fill"></div></div><div id="msg">Loading the station</div></div>
+<script>
+/* index.wasm is served in two parts (GitHub web upload limit); join them on fetch */
+(function(){const of=window.fetch.bind(window);window.fetch=function(u,o){const s=typeof u==='string'?u:(u&&u.url)||'';if(/(^|\/)index\.wasm(\?|$)/.test(s)){return Promise.all(['index.wasm.part0','index.wasm.part1'].map(n=>of(n,o).then(r=>{if(!r.ok)throw new Error('missing '+n);return r.blob();}))).then(bs=>new Response(new Blob(bs),{status:200,headers:{'Content-Type':'application/wasm'}}));}return of(u,o);};})();
+</script>
+<script src="index.js"></script>
+<script>
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":559012,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const engine = new Engine(GODOT_CONFIG);
+const boot = document.getElementById('boot'), fill = document.getElementById('fill'), msg = document.getElementById('msg');
+function fail(){ fill.style.background='#a5432f'; msg.textContent="This browser couldn't start the game. Try a recent Chrome or Safari with WebGL turned on."; }
+const missing = Engine.getMissingFeatures({threads:false});
+if (missing.length) { fail(); } else {
+  engine.startGame({onProgress:(c,t)=>{ if(t>0) fill.style.width=(100*c/t)+'%'; }})
+    .then(()=>{ boot.style.opacity=0; setTimeout(()=>boot.remove(),450); })
+    .catch((e)=>{ console.error(e); fail(); });
+}
+</script>
+</body>
+</html>
+

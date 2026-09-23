@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Increment</title>
+<style>
+html,body{margin:0;height:100%;background:#060b0e;color:#eef3ef;font:15px/1.45 -apple-system,system-ui,sans-serif}
+#hero{position:fixed;inset:0}
+.copy{position:fixed;left:0;right:0;bottom:0;padding:28px 24px calc(28px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(6,11,14,.85) 40%)}
+h1{font-weight:600;font-size:30px;margin:0 0 6px;letter-spacing:-.01em}
+p{margin:0 0 20px;color:#b9cdc6;max-width:30ch}
+a.play{display:inline-block;background:#f0b25a;color:#14201e;text-decoration:none;font-weight:600;padding:13px 26px;border-radius:12px}
+a.play:active{transform:scale(.97)}
+</style></head>
+<body><div id="hero"></div>
+<div class="copy"><h1>Increment</h1><p>Five days aboard a space station. The timeline is the job.</p><a class="play" href="./play.html">Play</a></div>
+<script type="module">
+import { mountHero } from './hero.js';
+const q = new URLSearchParams(location.search).get('hero');
+try { mountHero(document.getElementById('hero'), { force: q || undefined }); } catch (e) { console.error(e); }
+</script></body></html>
