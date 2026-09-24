@@ -56,6 +56,7 @@ func _ready() -> void :
 	sim.event_raised.connect(_on_event)
 	sim.day_ended.connect(_on_day_end)
 	sim.ground_call.connect( func(s): if view: view.say(s))
+	sim.activity_finished.connect(_on_activity_done)
 	_build()
 	_title()
 
@@ -599,6 +600,13 @@ func _on_event(ev: Dictionary) -> void :
 		b.pressed.connect( func(): _close_modal();sim.resolve_event(ev, o[0]))
 		v.add_child(b)
 		v.add_child(_wrap_label(o[2], font, 12, MUTED))
+
+func _on_activity_done(a: Dictionary) -> void :
+	if view == null or a.kind == "sleep" or a.get("urgent", false):
+		return
+	var late: = float(a.get("late", 0.0))
+	var how: = "On time." if late <= 15.0 else "%d min late." % int(late)
+	view.say("Done: %s. %s" % [a.title, how], 3.5)
 
 func _on_day_end(s: Dictionary) -> void :
 	_save()
