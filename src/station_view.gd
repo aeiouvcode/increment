@@ -93,9 +93,9 @@ func _make_earth() -> void :
 	img.generate_mipmaps()
 	earth = ImageTexture.create_from_image(img)
 
-func say(text: String) -> void :
+func say(text: String, secs: = 7.0) -> void :
 	caption = text
-	caption_t = 7.0
+	caption_t = secs
 
 func _process(delta: float) -> void :
 	tt += delta
