@@ -23,12 +23,13 @@ html,body{margin:0;height:100%;background:#ece7dd;overflow:hidden;touch-action:n
 <canvas id="canvas">Your browser can't show this game.</canvas>
 <div id="boot"><h1>Increment</h1><p>Five days aboard a space station.</p><div id="bar"><div id="fill"></div></div><div id="msg">Loading the station</div></div>
 <script>
-/* index.wasm is served in two parts (GitHub web upload limit); join them on fetch */
-(function(){const of=window.fetch.bind(window);window.fetch=function(u,o){const s=typeof u==='string'?u:(u&&u.url)||'';if(/(^|\/)index\.wasm(\?|$)/.test(s)){return Promise.all(['index.wasm.part0','index.wasm.part1'].map(n=>of(n,o).then(r=>{if(!r.ok)throw new Error('missing '+n);return r.blob();}))).then(bs=>new Response(new Blob(bs),{status:200,headers:{'Content-Type':'application/wasm'}}));}return of(u,o);};})();
+/* index.wasm is served in two parts (GitHub web upload limit); join them on fetch.
+   index.pck is served as base64 text in pck/part0-7.b64; join and decode it on fetch. */
+(function(){const of=window.fetch.bind(window);window.fetch=function(u,o){const s=typeof u==='string'?u:(u&&u.url)||'';if(/(^|\/)index\.pck(\?|$)/.test(s)){return Promise.all([0,1,2,3,4,5,6,7].map(i=>of('pck/part'+i+'.b64',o).then(r=>{if(!r.ok)throw new Error('missing pck part '+i);return r.text();}))).then(ts=>{const b=atob(ts.join('').replace(/\s+/g,''));const a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return new Response(new Blob([a]),{status:200,headers:{'Content-Type':'application/octet-stream','Content-Length':String(a.length)}});});}if(/(^|\/)index\.wasm(\?|$)/.test(s)){return Promise.all(['index.wasm.part0','index.wasm.part1'].map(n=>of(n,o).then(r=>{if(!r.ok)throw new Error('missing '+n);return r.blob();}))).then(bs=>new Response(new Blob(bs),{status:200,headers:{'Content-Type':'application/wasm'}}));}return of(u,o);};})();
 </script>
 <script src="index.js"></script>
 <script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":559012,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":584080,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const engine = new Engine(GODOT_CONFIG);
 const boot = document.getElementById('boot'), fill = document.getElementById('fill'), msg = document.getElementById('msg');
 function fail(){ fill.style.background='#a5432f'; msg.textContent="This browser couldn't start the game. Try a recent Chrome or Safari with WebGL turned on."; }
@@ -41,4 +42,3 @@ if (missing.length) { fail(); } else {
 </script>
 </body>
 </html>
-
