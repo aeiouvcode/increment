@@ -115,6 +115,16 @@ func _build() -> void :
 	scroll = ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	var vsb: = scroll.get_v_scroll_bar()
+	vsb.add_theme_stylebox_override("scroll", StyleBoxEmpty.new())
+	vsb.add_theme_stylebox_override("scroll_focus", StyleBoxEmpty.new())
+	for gk in ["grabber", "grabber_highlight", "grabber_pressed"]:
+		var gb: = StyleBoxFlat.new()
+		gb.bg_color = Color(0.165, 0.18, 0.192, 0.22 if gk == "grabber" else 0.38)
+		gb.set_corner_radius_all(2)
+		gb.content_margin_left = 1.5
+		gb.content_margin_right = 1.5
+		vsb.add_theme_stylebox_override(gk, gb)
 	col.add_child(scroll)
 	var pm: = MarginContainer.new()
 	pm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -535,6 +545,13 @@ func _page_crew() -> void :
 	_row(v, "Bone and muscle", "%.1f%%" % sim.fitness, "Two exercise sessions a day hold the line. Skipped days cost you.", TEAL if sim.fitness > 98 else AMBER)
 	_row(v, "Morale", "%d / 100" % int(sim.morale), "Meals, calls home and the Cupola help. Alarms and CO2 hurt.", TEAL if sim.morale > 50 else AMBER)
 	_row(v, "Exercise today", "%d of 2" % int(sim.today.get("exercise", 0)), "", TEAL)
+	var v2: = _card()
+	v2.add_child(_chip("TODAY · DAY %d OF 5" % sim.day, MUTED))
+	var pl: = int(sim.today.get("planned", 0))
+	var ot: = int(sim.today.get("ontime", 0))
+	_row(v2, "On time", "%d of %d" % [ot, pl] if pl > 0 else "-", "Tasks finished inside their planned slot. Houston notices.", TEAL if pl == 0 or ot * 10 >= pl * 8 else AMBER)
+	_row(v2, "Science", "%d" % int(sim.today.get("science", 0)), "Experiment runs completed today.", TEAL)
+	_row(v2, "Earth photos", "%d" % int(sim.today.get("photos", 0)), "Taken from the Cupola during free time.", TEAL)
 
 
 
