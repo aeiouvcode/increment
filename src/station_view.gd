@@ -29,6 +29,7 @@ var items: Array = []
 var caption: = ""
 var caption_t: = 0.0
 var earth: ImageTexture
+var ground_tex: = {}
 var lights: PackedVector2Array
 var mode: = "station"
 var cam: = {}
@@ -54,6 +55,41 @@ func _ready() -> void :
 		items.append({"k": kinds[i], "p": Vector2(r.randf_range(80, W - 80), r.randf_range(-60, 60)), 
 			"v": Vector2(r.randf_range(-6, 6), r.randf_range(-3, 3)), "a": r.randf() * TAU, "w": r.randf_range(-0.5, 0.5), 
 			"z": r.randf_range(0.15, 0.95) if i % 3 == 0 else r.randf_range(0.6, 0.95)})
+
+func _ground(target: String) -> ImageTexture:
+	if ground_tex.has(target):
+		return ground_tex[target]
+	var pal: Array = [Color("c9a878"), Color("a8804f"), Color("e2cfa6")]
+	var water: = false
+	if target.begins_with("Great Barrier"):
+		pal = [Color("1f5d7a"), Color("3fa3a8"), Color("8fd6cf")]; water = true
+	elif target.begins_with("Aconcagua"):
+		pal = [Color("6b6258"), Color("8d8274"), Color("f2f0ea")]
+	elif target.begins_with("Great Bahama"):
+		pal = [Color("1c4f78"), Color("4fb5c4"), Color("bfe9e2")]; water = true
+	elif target.begins_with("Lake Baikal"):
+		pal = [Color("4d5a45"), Color("24445e"), Color("dfe6ea")]
+	var n: = FastNoiseLite.new()
+	n.seed = target.hash() & 0xffff
+	n.frequency = 0.018
+	n.fractal_octaves = 5
+	var cl: = FastNoiseLite.new()
+	cl.seed = 77
+	cl.frequency = 0.02
+	cl.fractal_octaves = 3
+	var img: = Image.create(256, 256, false, Image.FORMAT_RGBA8)
+	for y in 256:
+		for x in 256:
+			var h: = n.get_noise_2d(x, y) * 0.5 + 0.5
+			var col: Color = pal[0].lerp(pal[1], smoothstep(0.35, 0.6, h)).lerp(pal[2], smoothstep(0.62, 0.8, h) * (0.6 if water else 0.8))
+			var cv: = cl.get_noise_2d(x, y)
+			if cv > 0.28:
+				col = col.lerp(Color("f4f3ee"), clampf((cv - 0.28) * 3.0, 0.0, 0.7))
+			img.set_pixel(x, y, col)
+	img.generate_mipmaps()
+	var tex: = ImageTexture.create_from_image(img)
+	ground_tex[target] = tex
+	return tex
 
 func _make_earth() -> void :
 	var n: = FastNoiseLite.new()
@@ -623,8 +659,8 @@ func _draw_camera() -> void :
 		var p: = c + Vector2(cos(ang), sin(ang)) * r
 		pts.append(p)
 		var d: = (p - c) / (r * 2.0)
-		uvs.append(Vector2(0.4 + d.x * 0.09 + off, 0.45 + d.y * 0.09))
-	draw_colored_polygon(pts, Color(1, 1, 1, 1), uvs, earth)
+		uvs.append(Vector2(0.29 + d.x * 0.55 + minf(off * 0.6, 0.42), 0.5 + d.y * 0.55))
+	draw_colored_polygon(pts, Color(1, 1, 1, 1), uvs, _ground(str(cam.get("target", ""))))
 
 	if cam.get("ok", false) and cam.get("done_t", -1.0) < 0.0:
 		var tp: Vector2 = c + Vector2(cam.x, cam.y) * r * 2.0
