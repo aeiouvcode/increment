@@ -87,8 +87,8 @@ func _make_earth() -> void :
 				if r.randf() < 0.004:
 					lights.append(Vector2(x, y))
 			var cl: = c.get_noise_3d(px * 1.3, float(y) * 1.6, pz * 1.3)
-			if cl > 0.08:
-				col = col.lerp(Color("f4f3ee"), clampf((cl - 0.08) * 3.2, 0.0, 0.92))
+			if cl > -0.02:
+				col = col.lerp(Color("f4f3ee"), clampf((cl + 0.02) * 2.6, 0.0, 0.94))
 			img.set_pixel(x, y, col)
 	img.generate_mipmaps()
 	earth = ImageTexture.create_from_image(img)
@@ -407,6 +407,7 @@ func _draw_air() -> void :
 
 func _draw_person(pos: Vector2, polo: Color, shorts: Color, z: float, seed_f: float, reaching: bool) -> void :
 	var y: = -0.02 + sin(tt * 0.7 + seed_f) * 0.07
+	z = clampf(z + sin(tt * 0.11 + seed_f) * 0.07, 0.0, 0.95)
 	var p: = _proj(pos.x, y, z)
 	var sc: = lerpf(1.0, BACK, z) * 1.45
 	var rot: = sin(tt * 0.33 + seed_f) * 0.16 + (mate_target - pos.x) * 0.0005
@@ -465,8 +466,11 @@ func _draw_astronaut() -> void :
 	if sleeping:
 		y = -0.02
 		rot = 0.0
-	var p: = _proj(astro.x, y, 0.72)
-	var sc: = lerpf(1.0, BACK, 0.72) * 1.55
+	var az: = 0.72
+	if not sleeping and not (kind == "exercise" and working):
+		az += sin(tt * 0.09 + 0.6) * 0.06
+	var p: = _proj(astro.x, y, az)
+	var sc: = lerpf(1.0, BACK, az) * 1.55
 	draw_set_transform(p, rot, Vector2(sc, sc))
 	var skin: = Color("c48d69")
 	var hair: = Color("33272188")
