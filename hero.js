@@ -2,8 +2,8 @@
 // rendered with three.js. Falls back to a flat composite on low-end or no-WebGL devices.
 import * as THREE from './three.module.min.js';
 
-const P = { wall: '#1f3b39', wall2: '#274a47', seam: 'rgba(210,235,228,0.10)', teal: '#3f7d74', mint: '#8fc3b4',
-  amber: '#f0b25a', warm: '#ffcf8a', space: '#060b0e' };
+const P = { wall: '#ddd5c7', wall2: '#ece7dd', seam: 'rgba(42,46,49,0.14)', teal: '#2c6a64', mint: '#6fa39a',
+  amber: '#f0b25a', warm: '#ffcf8a', space: '#0b1116' };
 
 function cv(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); return c; }
 function rnd(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
@@ -49,11 +49,11 @@ function wallLayer() {
     for (let x = 0; x <= w; x += 128) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); }
     for (let y = 96; y < h; y += 210) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
     const cx = w * 0.5, cy = h * 0.46, r = w * 0.27;
-    g.fillStyle = '#16302e'; g.beginPath(); g.arc(cx, cy, r + 46, 0, Math.PI * 2); g.fill();
-    g.strokeStyle = 'rgba(200,230,222,0.18)'; g.lineWidth = 3; g.beginPath(); g.arc(cx, cy, r + 46, 0, Math.PI * 2); g.stroke();
-    for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; g.fillStyle = 'rgba(210,235,228,0.35)';
+    g.fillStyle = '#c9c0af'; g.beginPath(); g.arc(cx, cy, r + 46, 0, Math.PI * 2); g.fill();
+    g.strokeStyle = 'rgba(42,46,49,0.22)'; g.lineWidth = 3; g.beginPath(); g.arc(cx, cy, r + 46, 0, Math.PI * 2); g.stroke();
+    for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; g.fillStyle = 'rgba(42,46,49,0.35)';
       g.beginPath(); g.arc(cx + Math.cos(a) * (r + 26), cy + Math.sin(a) * (r + 26), 4, 0, Math.PI * 2); g.fill(); }
-    g.globalCompositeOperation = 'destination-out'; g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.fill();
+    g.globalCompositeOperation = 'destination-out'; g.fillStyle = '#000'; g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.fill();
     g.globalCompositeOperation = 'source-over';
     g.strokeStyle = 'rgba(255,255,255,0.08)'; g.lineWidth = 8; g.beginPath(); g.arc(cx, cy, r * 0.86, -2.6, -1.9); g.stroke();
   });
@@ -65,9 +65,9 @@ function consoleLayer() {
     const r = rnd(11);
     for (const side of [0, 1]) {
       const x0 = side ? 572 : 268, w0 = 184, y0 = h * 0.60;
-      g.fillStyle = '#2d504c'; g.fillRect(x0, y0, w0, h - y0);
+      g.fillStyle = '#d3cbbc'; g.fillRect(x0, y0, w0, h - y0);
       g.strokeStyle = 'rgba(210,235,228,0.16)'; g.lineWidth = 2; g.strokeRect(x0 + 12, y0 + 12, w0 - 24, 64);
-      g.fillStyle = '#12211f'; g.fillRect(x0 + 20, y0 + 20, w0 - 40, 48);
+      g.fillStyle = '#2c3a3c'; g.fillRect(x0 + 20, y0 + 20, w0 - 40, 48);
       for (let i = 0; i < 4; i++) { g.fillStyle = `rgba(143,195,180,${0.35 + r() * 0.4})`; g.fillRect(x0 + 28, y0 + 28 + i * 10, 30 + r() * 80, 2); }
       for (let i = 0; i < 10; i++) {
         const x = x0 + 26 + (i % 5) * 32, y = y0 + 104 + Math.floor(i / 5) * 26;
@@ -82,11 +82,11 @@ function consoleLayer() {
 // Layer 3: foreground hatch edge, a cable, a floating pen
 function frontLayer() {
   return cv(1024, 1024, (g, w, h) => {
-    g.fillStyle = '#10201e'; g.beginPath(); g.rect(0, 0, w, h); g.ellipse(w * 0.5, h * 0.52, w * 0.56, h * 0.6, 0, 0, Math.PI * 2, true); g.fill();
-    g.strokeStyle = 'rgba(200,230,222,0.14)'; g.lineWidth = 4; g.beginPath(); g.ellipse(w * 0.5, h * 0.52, w * 0.56, h * 0.6, 0, 0, Math.PI * 2); g.stroke();
-    g.strokeStyle = '#0b1716'; g.lineWidth = 12; g.beginPath(); g.moveTo(-10, h * 0.12); g.bezierCurveTo(w * 0.25, h * 0.2, w * 0.2, h * 0.02, w * 0.46, -10); g.stroke();
+    g.fillStyle = '#e3dccf'; g.beginPath(); g.rect(0, 0, w, h); g.ellipse(w * 0.5, h * 0.52, w * 0.56, h * 0.6, 0, 0, Math.PI * 2, true); g.fill();
+    g.strokeStyle = 'rgba(42,46,49,0.16)'; g.lineWidth = 4; g.beginPath(); g.ellipse(w * 0.5, h * 0.52, w * 0.56, h * 0.6, 0, 0, Math.PI * 2); g.stroke();
+    g.strokeStyle = '#2a2e31'; g.lineWidth = 12; g.beginPath(); g.moveTo(-10, h * 0.12); g.bezierCurveTo(w * 0.25, h * 0.2, w * 0.2, h * 0.02, w * 0.46, -10); g.stroke();
     g.save(); g.translate(w * 0.72, h * 0.3); g.rotate(-0.5);
-    g.fillStyle = '#0d1a19'; g.fillRect(-60, -7, 120, 14); g.fillStyle = P.amber; g.fillRect(50, -7, 14, 14); g.restore();
+    g.fillStyle = '#3a3f42'; g.fillRect(-60, -7, 120, 14); g.fillStyle = P.amber; g.fillRect(50, -7, 14, 14); g.restore();
   });
 }
 
@@ -109,7 +109,9 @@ export function staticHero(el) {
 
 export function mountHero(el, opts = {}) {
   if (opts.force !== 'webgl' && (opts.force === 'static' || !webgl() || lowEnd())) return staticHero(el);
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false }); }
+  catch (e) { console.warn('WebGL unavailable; showing static hero', e); return staticHero(el); }
   renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   el.appendChild(renderer.domElement); renderer.domElement.style.cssText = 'width:100%;height:100%;display:block';
@@ -141,14 +143,21 @@ export function mountHero(el, opts = {}) {
   fit(); addEventListener('resize', fit);
   const aim = { x: 0, y: 0 }, cur = { x: 0, y: 0 };
   el.addEventListener('pointermove', (e) => { const b = el.getBoundingClientRect(); aim.x = ((e.clientX - b.left) / b.width - 0.5) * 2; aim.y = ((e.clientY - b.top) / b.height - 0.5) * 2; });
-  const onTilt = (e) => { if (e.gamma == null) return; aim.x = Math.max(-1, Math.min(1, e.gamma / 25)); aim.y = Math.max(-1, Math.min(1, (e.beta - 45) / 25)); };
-  const askTilt = () => { const D = window.DeviceOrientationEvent; if (D && typeof D.requestPermission === 'function') D.requestPermission().then((s) => s === 'granted' && addEventListener('deviceorientation', onTilt)).catch(() => {}); else addEventListener('deviceorientation', onTilt); };
-  el.addEventListener('pointerdown', askTilt, { once: true }); if (!(window.DeviceOrientationEvent && DeviceOrientationEvent.requestPermission)) askTilt();
+  // Pointer movement is enough for parallax. Never interrupt Play with a motion-permission prompt.
+  el.addEventListener('pointerleave', () => { aim.x = 0; aim.y = 0; });
   let t0 = performance.now(), slow = 0, running = true;
+  function stop() {
+    if (!running) return;
+    running = false; removeEventListener('resize', fit);
+    planes.forEach(p => { p.geometry.dispose(); p.material.map.dispose(); p.material.dispose(); });
+    glow.geometry.dispose(); glow.material.map.dispose(); glow.material.dispose();
+    dg.dispose(); dust.material.dispose(); renderer.dispose(); renderer.domElement.remove();
+  }
+  renderer.domElement.addEventListener('webglcontextlost', (e) => { e.preventDefault(); stop(); staticHero(el); }, { once: true });
   function frame(now) {
     if (!running) return;
     const dt = Math.min(0.05, (now - t0) / 1000); t0 = now;
-    if (dt > 0.034) { slow++; if (slow > 90) { running = false; renderer.domElement.remove(); staticHero(el); return; } } else slow = Math.max(0, slow - 1);
+    if (dt > 0.034) { slow++; if (slow > 90) { stop(); staticHero(el); return; } } else slow = Math.max(0, slow - 1);
     cur.x += (aim.x - cur.x) * Math.min(1, dt * 3); cur.y += (aim.y - cur.y) * Math.min(1, dt * 3);
     const tt = now / 1000;
     cam.position.x = cur.x * 0.32 + Math.sin(tt * 0.21) * 0.05; cam.position.y = -cur.y * 0.22 + Math.cos(tt * 0.17) * 0.04; cam.lookAt(0, 0, -2);
@@ -158,5 +167,5 @@ export function mountHero(el, opts = {}) {
     renderer.render(scene, cam); requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame); el.dataset.mode = 'webgl';
-  return { mode: 'webgl', stop() { running = false; } };
+  return { mode: 'webgl', stop };
 }

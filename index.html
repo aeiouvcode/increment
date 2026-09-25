@@ -1,19 +1,130 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Increment</title>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ece7dd">
+<title>Increment - a space station day simulator</title>
+<meta name="description" content="Five days aboard a space station. Houston plans your day to the five minutes. You work the steps, keep the air clean, exercise twice, and handle what breaks.">
+<meta property="og:title" content="Increment">
+<meta property="og:description" content="Five days aboard a space station. The timeline is the job.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="fonts.css">
+<link rel="icon" type="image/png" href="index.icon.png">
+<link rel="apple-touch-icon" href="index.apple-touch-icon.png">
 <style>
-html,body{margin:0;height:100%;background:#060b0e;color:#eef3ef;font:15px/1.45 -apple-system,system-ui,sans-serif}
-#hero{position:fixed;inset:0}
-.copy{position:fixed;left:0;right:0;bottom:0;padding:28px 24px calc(28px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(6,11,14,.85) 40%)}
-h1{font-weight:600;font-size:30px;margin:0 0 6px;letter-spacing:-.01em}
-p{margin:0 0 20px;color:#b9cdc6;max-width:30ch}
-a.play{display:inline-block;background:#f0b25a;color:#14201e;text-decoration:none;font-weight:600;padding:13px 26px;border-radius:12px}
-a.play:active{transform:scale(.97)}
+:root{--ivory:#ece7dd;--paper:#f4f1ea;--ink:#22262a;--muted:#6b6f72;--line:#d9d2c4;--teal:#2c6a64;--amber:#e9a64b;
+  --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+html{background:var(--ivory);color:var(--ink);font:16px/1.5 var(--sans);-webkit-text-size-adjust:100%}
+body{margin:0}
+a{color:inherit}
+.hero{position:relative;height:100svh;min-height:560px;overflow:hidden;background:#0d1114}
+#hero{position:absolute;inset:0}
+.hero-copy{position:absolute;left:0;right:0;bottom:0;padding:26px 24px calc(26px + env(safe-area-inset-bottom));
+  background:var(--ivory);border-top:1px solid var(--line);border-radius:22px 22px 0 0;box-shadow:0 -10px 30px rgba(20,24,27,.10)}
+.inner{max-width:980px;margin:0 auto}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin:0 0 12px}
+h1{font-weight:600;font-size:34px;line-height:1.1;letter-spacing:-.015em;margin:0 0 8px}
+.lede{margin:0 0 20px;color:var(--muted);max-width:34ch;font-size:17px}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 28px;border-radius:12px;font-weight:600;text-decoration:none;font-size:16px;transition:transform .12s}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--teal);color:#f4f3ee}
+.btn.ghost{color:var(--ink);border:1px solid var(--line);background:var(--paper)}
+section.how{padding:64px 24px 24px}
+.how h2{font-size:26px;letter-spacing:-.01em;margin:0 0 6px;font-weight:600}
+.how .sub{color:var(--muted);margin:0 0 40px;max-width:46ch}
+.row{display:grid;gap:22px;align-items:center;margin:0 0 56px}
+.phone{justify-self:center;width:min(78vw,300px);aspect-ratio:390/844;border-radius:30px;overflow:hidden;background:var(--paper);
+  border:1px solid var(--line);box-shadow:0 18px 40px rgba(34,38,42,.14),0 2px 6px rgba(34,38,42,.08)}
+.phone img{width:100%;height:100%;object-fit:cover;display:block}
+.tag{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;margin:0 0 10px}
+.tag.teal{color:var(--teal)}.tag.amber{color:#b07420}
+.row h3{font-size:22px;line-height:1.25;margin:0 0 8px;font-weight:600;letter-spacing:-.01em}
+.row p{margin:0;color:var(--muted);max-width:40ch}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:8px 0 0}
+.facts div{padding:18px 4px}
+.facts b{display:block;font:500 24px/1.1 var(--mono);color:var(--ink)}
+.facts span{font-size:13px;color:var(--muted)}
+.cta{padding:56px 24px calc(56px + env(safe-area-inset-bottom));text-align:center}
+.cta h2{font-size:28px;margin:0 0 8px;font-weight:600;letter-spacing:-.01em}
+.cta p{color:var(--muted);margin:0 auto 22px;max-width:36ch}
+footer{padding:0 24px 32px;text-align:center;font-size:13px;color:var(--muted)}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+@media (min-width:760px){
+  .hero-copy{left:auto;right:auto;bottom:40px;margin-left:max(24px,calc((100vw - 980px)/2));width:420px;border-radius:22px;border:1px solid var(--line)}
+  h1{font-size:44px}
+  .row{grid-template-columns:1fr 1fr;gap:56px}
+  .row:nth-child(even) .phone{order:2}
+  .phone{width:300px}
+}
+@media (orientation:landscape) and (max-height:600px){
+  .hero{height:100svh;min-height:0}
+  .hero-copy{left:16px;right:auto;bottom:16px;margin-left:0;width:min(420px,calc(100vw - 32px));padding:18px;border-radius:16px}
+  .hero-copy .eyebrow{margin-bottom:7px}
+  .hero-copy h1{font-size:30px;margin-bottom:5px}
+  .hero-copy .lede{font-size:15px;margin-bottom:12px}
+  .hero-copy .btn{min-height:44px}
+}
 </style></head>
-<body><div id="hero"></div>
-<div class="copy"><h1>Increment</h1><p>Five days aboard a space station. The timeline is the job.</p><a class="play" href="./play.html">Play</a></div>
+<body>
+<header class="hero">
+  <div id="hero" aria-hidden="true"></div>
+  <div class="hero-copy">
+    <p class="eyebrow">A space station day simulator</p>
+    <h1>Increment</h1>
+    <p class="lede">Five days aboard a space station. The timeline is the job.</p>
+    <div class="actions"><a class="btn primary" href="./play.html">Play</a><a class="btn ghost" href="#how">How it plays</a></div>
+  </div>
+</header>
+
+<main>
+<section class="how" id="how"><div class="inner">
+  <h2>How it plays</h2>
+  <p class="sub">Houston plans your day to the five minutes. You work the steps, keep the air clean, exercise twice, and handle what breaks.</p>
+
+  <div class="row reveal">
+    <div class="phone"><img data-shot="plan" alt="The day plan: breakfast block with its steps and a Begin button, the station interior above" width="390" height="844"></div>
+    <div><p class="tag teal">The plan</p><h3>Every block has a start time.</h3><p>Wake, breakfast, science, exercise, maintenance. Tap Begin, work the steps, and watch the clock. Late adds up.</p></div>
+  </div>
+
+  <div class="row reveal">
+    <div class="phone"><img data-shot="alarm" alt="A caution sheet: the Lab CO2 removal unit has stopped, with three recovery options" width="390" height="844"></div>
+    <div><p class="tag amber">Off-nominal</p><h3>Things break. You choose what it costs.</h3><p>The CO2 scrubber stops. Fix it yourself, start the backup, or let the ground work it while the air gets worse. The clock holds while you decide.</p></div>
+  </div>
+
+  <div class="row reveal">
+    <div class="phone"><img data-shot="camera" alt="The Cupola camera framing the Richat Structure in the Sahara" width="390" height="844"></div>
+    <div><p class="tag teal">The Cupola</p><h3>Look down when you get the chance.</h3><p>Earth-photo passes put a 400 mm lens in your hands. Frame the Richat Structure or the Bahama Bank before the station carries you past.</p></div>
+  </div>
+
+  <div class="row reveal">
+    <div class="phone"><img data-shot="summary" alt="The daily summary from Houston: on-time activities, science, exercise, peak CO2 and sleep" width="390" height="844"></div>
+    <div><p class="tag teal">Daily summary</p><h3>Houston grades the day.</h3><p>On-time rate, science, workouts, peak CO2, sleep. Then lights out, and you wake into the next one.</p></div>
+  </div>
+
+  <div class="facts reveal"><div><b>5</b><span>days aboard</span></div><div><b>92</b><span>minute orbits</span></div><div><b>2</b><span>workouts a day</span></div></div>
+</div></section>
+
+<section class="cta reveal"><div class="inner">
+  <h2>Ready for Day 1?</h2>
+  <p>Runs in your browser, on a phone or a desktop. No install.</p>
+  <a class="btn primary" href="./play.html">Play Increment</a>
+</div></section>
+</main>
+<footer>Built with Godot. Original art.</footer>
+
 <script type="module">
 import { mountHero } from './hero.js';
 const q = new URLSearchParams(location.search).get('hero');
 try { mountHero(document.getElementById('hero'), { force: q || undefined }); } catch (e) { console.error(e); }
-</script></body></html>
+const shots = { plan: './shot-plan.js', alarm: './shot-alarm.js', camera: './shot-camera.js', summary: './shot-summary.js' };
+const load = (img) => { const k = img.dataset.shot; if (!k || img.src) return; import(shots[k]).then(m => { img.src = m.default; }).catch(e => console.error(e)); };
+const els = document.querySelectorAll('.reveal');
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver((es) => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); e.target.querySelectorAll('img[data-shot]').forEach(load); io.unobserve(e.target); } }), { rootMargin: '0px 0px 25% 0px', threshold: 0.05 });
+  els.forEach(el => io.observe(el));
+} else { els.forEach(el => { el.classList.add('in'); el.querySelectorAll('img[data-shot]').forEach(load); }); }
+</script>
+</body></html>
