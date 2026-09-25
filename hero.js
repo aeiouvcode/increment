@@ -109,7 +109,9 @@ export function staticHero(el) {
 
 export function mountHero(el, opts = {}) {
   if (opts.force !== 'webgl' && (opts.force === 'static' || !webgl() || lowEnd())) return staticHero(el);
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false }); }
+  catch (e) { console.warn('WebGL unavailable; showing static hero', e); return staticHero(el); }
   renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   el.appendChild(renderer.domElement); renderer.domElement.style.cssText = 'width:100%;height:100%;display:block';
@@ -141,14 +143,21 @@ export function mountHero(el, opts = {}) {
   fit(); addEventListener('resize', fit);
   const aim = { x: 0, y: 0 }, cur = { x: 0, y: 0 };
   el.addEventListener('pointermove', (e) => { const b = el.getBoundingClientRect(); aim.x = ((e.clientX - b.left) / b.width - 0.5) * 2; aim.y = ((e.clientY - b.top) / b.height - 0.5) * 2; });
-  const onTilt = (e) => { if (e.gamma == null) return; aim.x = Math.max(-1, Math.min(1, e.gamma / 25)); aim.y = Math.max(-1, Math.min(1, (e.beta - 45) / 25)); };
-  const askTilt = () => { const D = window.DeviceOrientationEvent; if (D && typeof D.requestPermission === 'function') D.requestPermission().then((s) => s === 'granted' && addEventListener('deviceorientation', onTilt)).catch(() => {}); else addEventListener('deviceorientation', onTilt); };
-  el.addEventListener('pointerdown', askTilt, { once: true }); if (!(window.DeviceOrientationEvent && DeviceOrientationEvent.requestPermission)) askTilt();
+  // Pointer movement is enough for parallax. Never interrupt Play with a motion-permission prompt.
+  el.addEventListener('pointerleave', () => { aim.x = 0; aim.y = 0; });
   let t0 = performance.now(), slow = 0, running = true;
+  function stop() {
+    if (!running) return;
+    running = false; removeEventListener('resize', fit);
+    planes.forEach(p => { p.geometry.dispose(); p.material.map.dispose(); p.material.dispose(); });
+    glow.geometry.dispose(); glow.material.map.dispose(); glow.material.dispose();
+    dg.dispose(); dust.material.dispose(); renderer.dispose(); renderer.domElement.remove();
+  }
+  renderer.domElement.addEventListener('webglcontextlost', (e) => { e.preventDefault(); stop(); staticHero(el); }, { once: true });
   function frame(now) {
     if (!running) return;
     const dt = Math.min(0.05, (now - t0) / 1000); t0 = now;
-    if (dt > 0.034) { slow++; if (slow > 90) { running = false; renderer.domElement.remove(); staticHero(el); return; } } else slow = Math.max(0, slow - 1);
+    if (dt > 0.034) { slow++; if (slow > 90) { stop(); staticHero(el); return; } } else slow = Math.max(0, slow - 1);
     cur.x += (aim.x - cur.x) * Math.min(1, dt * 3); cur.y += (aim.y - cur.y) * Math.min(1, dt * 3);
     const tt = now / 1000;
     cam.position.x = cur.x * 0.32 + Math.sin(tt * 0.21) * 0.05; cam.position.y = -cur.y * 0.22 + Math.cos(tt * 0.17) * 0.04; cam.lookAt(0, 0, -2);
@@ -158,5 +167,5 @@ export function mountHero(el, opts = {}) {
     renderer.render(scene, cam); requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame); el.dataset.mode = 'webgl';
-  return { mode: 'webgl', stop() { running = false; } };
+  return { mode: 'webgl', stop };
 }
