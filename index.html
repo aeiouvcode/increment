@@ -59,6 +59,14 @@ footer{padding:0 24px 32px;text-align:center;font-size:13px;color:var(--muted)}
   .row:nth-child(even) .phone{order:2}
   .phone{width:300px}
 }
+@media (orientation:landscape) and (max-height:600px){
+  .hero{height:100svh;min-height:0}
+  .hero-copy{left:16px;right:auto;bottom:16px;margin-left:0;width:min(420px,calc(100vw - 32px));padding:18px;border-radius:16px}
+  .hero-copy .eyebrow{margin-bottom:7px}
+  .hero-copy h1{font-size:30px;margin-bottom:5px}
+  .hero-copy .lede{font-size:15px;margin-bottom:12px}
+  .hero-copy .btn{min-height:44px}
+}
 </style></head>
 <body>
 <header class="hero">
