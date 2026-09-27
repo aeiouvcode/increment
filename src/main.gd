@@ -41,6 +41,7 @@ var live: = {}
 var camera_act: Dictionary = {}
 var tab_bar: Control
 var clock_held: = true
+var summary_open: = false
 
 func _ready() -> void :
 	font = load("res://fonts/IBMPlexSans-Regular.ttf")
@@ -382,6 +383,12 @@ func _tag_color(tag: String) -> Color:
 	return MUTED
 
 func _page_plan() -> void :
+	if summary_open:
+		var v: = _card()
+		v.add_child(_chip("DAY COMPLETE", TEAL))
+		v.add_child(_wrap_label("Houston has your daily summary", font_sb, 18, INK))
+		v.add_child(_wrap_label("Review the day before waking into the next one.", font, 13, MUTED))
+		return
 	if sim.sleeping:
 		var v: = _card()
 		v.add_child(_chip("SLEEP", MUTED))
@@ -609,6 +616,7 @@ func _on_activity_done(a: Dictionary) -> void :
 	view.say("Done: %s. %s" % [a.title, how], 3.5)
 
 func _on_day_end(s: Dictionary) -> void :
+	summary_open = true
 	_save()
 	var v: = _sheet(TEAL)
 	var fin: bool = s.get("final", false)
@@ -637,7 +645,7 @@ func _on_day_end(s: Dictionary) -> void :
 		v.add_child(b)
 	else:
 		var b: = _primary("Wake up · Day %d" % (s.day + 1))
-		b.pressed.connect( func(): _close_modal();clock_held = true;sim.next_day();sim.begin_next();_save())
+		b.pressed.connect( func(): _close_modal();summary_open = false;clock_held = true;sim.next_day();sim.begin_next();_save())
 		v.add_child(b)
 
 func _title() -> void :

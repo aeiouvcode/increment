@@ -29,7 +29,7 @@ html,body{margin:0;height:100%;background:#ece7dd;overflow:hidden;touch-action:n
 </script>
 <script src="index.js"></script>
 <script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":584080,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":560356,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const engine = new Engine(GODOT_CONFIG);
 const boot = document.getElementById('boot'), fill = document.getElementById('fill'), msg = document.getElementById('msg');
 function fail(){ fill.style.background='#a5432f'; msg.textContent="This browser couldn't start the game. Try a recent Chrome or Safari with WebGL turned on."; }
@@ -42,3 +42,4 @@ if (missing.length) { fail(); } else {
 </script>
 </body>
 </html>
+
