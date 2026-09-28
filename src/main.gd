@@ -42,6 +42,7 @@ var camera_act: Dictionary = {}
 var tab_bar: Control
 var clock_held: = true
 var summary_open: = false
+var header_stamp: = ""
 
 func _ready() -> void :
 	font = load("res://fonts/IBMPlexSans-Regular.ttf")
@@ -294,7 +295,10 @@ func _process(delta: float) -> void :
 	if not paused and not blocked:
 		var rate: float = 120.0 if sim.sleeping else SPEEDS[speed_i]
 		sim.advance(delta * rate)
-	_header()
+	var next_header_stamp: = "%d|%d|%d|%d|%d" % [sim.day, int(sim.t), int(ceil(sim.minutes_to_terminator())), int(sim.sunlit()), int(clock_held)]
+	if next_header_stamp != header_stamp:
+		header_stamp = next_header_stamp
+		_header()
 	var s: = _signature()
 	if s != sig:
 		sig = s

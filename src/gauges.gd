@@ -11,8 +11,24 @@ const AMBER: = Color("b7792b")
 const RED: = Color("a5432f")
 const HAIR: = Color("d8d1c4")
 
+var draw_signature: = ""
+
 func _process(_d: float) -> void :
-	queue_redraw()
+	if sim == null:
+		return
+	# Only repaint when a visible digit, warning color, or bar pixel can change.
+	var bar_width: float = maxf(0.0, size.x / 4.0 - 28.0)
+	var signature: = "%.1f|%.1f|%d|%d|%d|%d|%d|%d|%d|%d|%d|%.1f" % [
+		sim.co2, sim.o2, int(sim.urine), int(sim.soc),
+		int(sim.co2 > 3.0) + int(sim.co2 > 4.0),
+		int(sim.urine > 60.0) + int(sim.urine > 85.0), int(sim.soc > 40.0),
+		int(clampf(sim.co2 / 6.0, 0.0, 1.0) * bar_width),
+		int(clampf((sim.o2 - 18.0) / 6.0, 0.0, 1.0) * bar_width),
+		int(clampf(sim.urine / 100.0, 0.0, 1.0) * bar_width),
+		int(clampf(sim.soc / 100.0, 0.0, 1.0) * bar_width), size.x]
+	if signature != draw_signature:
+		draw_signature = signature
+		queue_redraw()
 
 func _draw() -> void :
 	if sim == null:
